@@ -54,6 +54,29 @@ class AliasTests(unittest.TestCase):
                 self.assertTrue(alias_connect.change_alias(config, "work", "edit", ["work", "other"]))
             self.assertEqual(config.read_text(), "Host work\n    HostName new.example # note\n    User alice\n    Port 22\n    ForwardAgent yes\nHost other\n    User bob\n")
 
+    def test_edit_adds_missing_port_without_duplicating_user(self):
+        with tempfile.TemporaryDirectory() as directory:
+            config = Path(directory) / "config"
+            original = "Host bgz-prod\n    HostName prod.example.com\n    User ec2-user\n    IdentityFile ~/.ssh/prod\nHost other\n    User alice\n"
+            config.write_text(original)
+            with patch("builtins.input", side_effect=["", "", "", "2222", ""]):
+                self.assertTrue(alias_connect.change_alias(config, "bgz-prod", "edit", ["bgz-prod", "other"]))
+            result = config.read_text()
+            self.assertIn("    Port 2222\n", result)
+            self.assertEqual(result.count("    User ec2-user\n"), 1)
+            self.assertIn("    HostName prod.example.com\n", result)
+            self.assertIn("    IdentityFile \"~/.ssh/prod\"\n", result)
+            self.assertIn("Host other\n    User alice\n", result)
+
+    def test_edit_adds_multiple_missing_fields_without_overwriting_existing(self):
+        with tempfile.TemporaryDirectory() as directory:
+            config = Path(directory) / "config"
+            config.write_text("Host prod\n    User ec2-user\n    ForwardAgent yes\n")
+            with patch("builtins.input", side_effect=["", "prod.example.com", "", "2222", "~/.ssh/prod"]):
+                self.assertTrue(alias_connect.change_alias(config, "prod", "edit", ["prod"]))
+            self.assertEqual(config.read_text(),
+                             'Host prod\n    HostName prod.example.com\n    Port 2222\n    IdentityFile "~/.ssh/prod"\n    User ec2-user\n    ForwardAgent yes\n')
+
     def test_edit_rejects_invalid_port_and_shared_block(self):
         with tempfile.TemporaryDirectory() as directory:
             config = Path(directory) / "config"

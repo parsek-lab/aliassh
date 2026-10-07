@@ -252,18 +252,21 @@ def edit_host(lines: list[str], index: int, alias: str, existing: list[str]) -> 
             lines[index], count=1, flags=re.IGNORECASE,
         )
     newline = "\r\n" if lines[index].endswith("\r\n") else "\n"
+    # Rewrite existing fields from bottom to top, then insert new fields.
+    # Inserting first would shift the saved positions of existing directives.
+    for field in sorted(found, key=found.get, reverse=True):
+        value = values[field]
+        position = found[field]
+        if value:
+            original = lines[position]
+            comment = original[original.index("#"):] if "#" in original else ""
+            comment = comment.rstrip("\r\n")
+            updated[position] = f"    {field} {value}{' ' + comment if comment else ''}{newline}"
+        else:
+            del updated[position]
     for field in reversed(fields):
         value = values[field]
-        if field in found:
-            position = found[field]
-            if value:
-                original = lines[position]
-                comment = original[original.index("#"):] if "#" in original else ""
-                comment = comment.rstrip("\r\n")
-                updated[position] = f"    {field} {value}{' ' + comment if comment else ''}{newline}"
-            else:
-                del updated[position]
-        elif value and (field != "Port" or value != "22"):
+        if field not in found and value and (field != "Port" or value != "22"):
             updated.insert(index + 1, f"    {field} {value}{newline}")
     return updated
 
