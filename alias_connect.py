@@ -329,7 +329,7 @@ def update_app() -> int:
     version_file = Path(__file__).resolve().parent / ".aliassh-version"
     try:
         request = urllib.request.Request(
-            "https://api.github.com/repos/orfaust/aliassh/commits/main",
+            "https://api.github.com/repos/parsek-lab/aliassh/commits/main",
             headers={"Accept": "application/vnd.github+json", "Cache-Control": "no-cache"},
         )
         with urllib.request.urlopen(request, timeout=20) as response:
@@ -341,7 +341,7 @@ def update_app() -> int:
             print(f"Already up to date ({commit[:7]}).")
             return 0
         print(f"Updating aliassh to {commit[:7]}...", flush=True)
-        url = f"https://raw.githubusercontent.com/orfaust/aliassh/{commit}/bootstrap.py"
+        url = f"https://raw.githubusercontent.com/parsek-lab/aliassh/{commit}/bootstrap.py"
         with urllib.request.urlopen(url, timeout=20) as response:
             script = response.read(1024 * 1024 + 1)
         if not script or len(script) > 1024 * 1024:

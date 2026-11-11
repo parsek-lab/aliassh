@@ -15,19 +15,19 @@ No Python packages need to be installed.
 Install directly from GitHub. In **PowerShell**, use:
 
 ```powershell
-(Invoke-WebRequest https://raw.githubusercontent.com/orfaust/aliassh/main/bootstrap.py).Content | py -
+(Invoke-WebRequest https://raw.githubusercontent.com/parsek-lab/aliassh/main/bootstrap.py).Content | py -
 ```
 
 In **Command Prompt** or Git Bash on Windows, use:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/orfaust/aliassh/main/bootstrap.py | py -
+curl -fsSL https://raw.githubusercontent.com/parsek-lab/aliassh/main/bootstrap.py | py -
 ```
 
 On macOS or Linux, use:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/orfaust/aliassh/main/bootstrap.py | python3 -
+curl -fsSL https://raw.githubusercontent.com/parsek-lab/aliassh/main/bootstrap.py | python3 -
 ```
 
 In PowerShell, `curl` may be an alias for `Invoke-WebRequest` and does not accept `-fsSL`. These commands fetch the raw `bootstrap.py` from `main`; it downloads `install.py` and `alias_connect.py` over HTTPS and runs the installer. Review the scripts before piping them into Python. **Rerun the same command to update** after changes are published to `main`: it replaces the app and launcher without duplicating the PATH entry.

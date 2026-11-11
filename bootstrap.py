@@ -12,8 +12,8 @@ import time
 import urllib.request
 from pathlib import Path
 
-RAW_BASE = "https://raw.githubusercontent.com/orfaust/aliassh/"
-API_URL = "https://api.github.com/repos/orfaust/aliassh/commits/main"
+RAW_BASE = "https://raw.githubusercontent.com/parsek-lab/aliassh/"
+API_URL = "https://api.github.com/repos/parsek-lab/aliassh/commits/main"
 FILES = ("install.py", "alias_connect.py")
 MAX_FILE_BYTES = 1024 * 1024
 
